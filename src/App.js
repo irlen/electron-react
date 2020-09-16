@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+/** @jsx jsx */
+import { jsx, css, Global, ClassNames } from '@emotion/core'
+import styled from '@emotion/styled'
+import React, { useState, useEffect } from 'react';
+import { ConfigProvider  } from 'antd';
+import zhCN from 'antd/es/locale/zh_CN';
+import { connect } from 'react-redux'
 
-function App() {
+
+
+import './App.less';
+import { FrameRoute } from './router'
+import { setWindowH } from './redux/actions'
+
+function App(props) {
+  const [ windowH,setWindowH ]  = useState(0);
+  useEffect(()=>{
+    const windowH = parseInt(document.body.clientHeight,0);
+    props.setWindowH(windowH);
+    window.onresize = ()=>{
+      const rwindowH = parseInt(document.body.clientHeight,0);
+      props.setWindowH(rwindowH);
+    }
+  },[])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ConfigProvider locale={zhCN}>
+        <div>
+          <FrameRoute />
+        </div>
+      </ConfigProvider>
     </div>
   );
 }
 
-export default App;
+const mapDispatchToProps = (dispatch)=>({
+  setWindowH: (windowH)=>{dispatch(setWindowH(windowH))}
+})
+
+
+export default connect(null,mapDispatchToProps)(App);
